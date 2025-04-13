@@ -45,4 +45,4 @@ runs:
         git config --global user.email 'github-actions@github.com'
         git add tldr/
         git commit -m "Add newsletter archive for ${{ inputs.date }}"
-        git push https://x-access-token:${{ inputs.gh_token }}@github.com/${{ inputs.repo }}.git main
+        git push https://x-access-token:${{ inputs.gh_token }}@github.com/${{ inputs.repo }}.git main || echo "No changes to commit"
