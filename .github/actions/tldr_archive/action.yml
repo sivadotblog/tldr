@@ -16,11 +16,9 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout repository
-      shell: bash
       uses: actions/checkout@v2
 
     - name: Set up Python
-      shell: bash
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
