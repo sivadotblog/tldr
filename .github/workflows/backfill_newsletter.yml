@@ -13,6 +13,8 @@ on:
 jobs:
   backfill_newsletter:
     runs-on: ubuntu-latest
+  permissions:
+    contents: write
 
     strategy:
       matrix:
