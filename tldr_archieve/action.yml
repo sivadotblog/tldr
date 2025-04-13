@@ -1,0 +1,44 @@
+name: 'Archive Newsletter'
+description: 'Reusable action to archive newsletters'
+
+inputs:
+  date:
+    description: 'Date of the newsletter (YYYY-MM-DD)'
+    required: true
+  category:
+    description: 'Category of the newsletter'
+    required: true
+  repo:
+    description: 'Repository to push the changes'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 markdownify
+
+    - name: Run archive script
+      run: |
+        python scripts/archive_newsletter.py ${{ inputs.category }} ${{ inputs.date }}
+
+    - name: Set up GitHub token
+      run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add tldr/
+        git commit -m "Add newsletter archive for ${{ inputs.date }}"
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ inputs.repo }}.git main
