@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       from_date:
-        description: 'Start date for backfill (YYYY-MM-DD)'
+        description: "Start date for backfill (YYYY-MM-DD)"
         required: true
       to_date:
-        description: 'End date for backfill (YYYY-MM-DD)'
+        description: "End date for backfill (YYYY-MM-DD)"
         required: true
 
 jobs:
@@ -21,13 +21,14 @@ jobs:
       cancel-in-progress: true
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Run backfill script
-      uses: ./.github/actions/tldr_archive
-      with:
-        date: ${{ github.event.inputs.from_date }}
-        category: tech
-        repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}  
+      - name: Run backfill script
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: ${{ github.event.inputs.to_date }}
+          from_date: ${{ github.event.inputs.from_date }}
+          category: tech
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
