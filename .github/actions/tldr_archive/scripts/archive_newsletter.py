@@ -5,6 +5,7 @@ import markdownify
 from datetime import datetime
 import logging
 
+
 def fetch_newsletter(category, date):
     url = f"https://tldr.tech/{category}/{date}"
     response = requests.get(url)
@@ -15,22 +16,26 @@ def fetch_newsletter(category, date):
     else:
         raise Exception(f"Failed to fetch newsletter for {category} on {date}")
 
+
 def parse_html_to_markdown(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    content = soup.find('div', {'class': 'newsletter-content'})
+    content = BeautifulSoup(html_content, "html.parser")
+
     markdown_content = markdownify.markdownify(str(content), heading_style="ATX")
     return markdown_content
+
 
 def save_markdown(category, date, markdown_content):
     directory = f"tldr/{category}"
     if not os.path.exists(directory):
         os.makedirs(directory)
     file_path = f"{directory}/{date}.md"
-    with open(file_path, 'w') as file:
+    with open(file_path, "w") as file:
         file.write(markdown_content)
+
 
 if __name__ == "__main__":
     import sys
+
     logging.basicConfig(level=logging.INFO)
     try:
         category = sys.argv[1]
@@ -46,3 +51,4 @@ if __name__ == "__main__":
             logging.info(f"Successfully processed {category} newsletter for {date}")
     except Exception as e:
         logging.error(f"Error processing {category} newsletter for {date}: {e}")
+
