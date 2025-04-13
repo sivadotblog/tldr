@@ -55,5 +55,5 @@ jobs:
           date: ${{ github.event.inputs.from_date }}
           category: ai
           repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+          gh_token: ${{ secrets.GH_TOKEN }}
 
