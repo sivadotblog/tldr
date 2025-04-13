@@ -35,8 +35,11 @@ jobs:
         pip install requests beautifulsoup4 markdownify
 
     - name: Run backfill script
-      run: |
-        python scripts/backfill_newsletter.py ${{ github.event.inputs.from_date }} ${{ github.event.inputs.to_date }}
+      uses: ./tldr_archieve/action.yml
+      with:
+        date: ${{ github.event.inputs.from_date }}
+        category: tech
+        repo: ${{ github.repository }}
 
     - name: Set up GitHub token
       run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
