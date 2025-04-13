@@ -35,7 +35,7 @@ jobs:
         pip install requests beautifulsoup4 markdownify
 
     - name: Run backfill script
-      uses: ../.github/actions/tldr_archive
+      uses: ./.github/actions/tldr_archive
       with:
         date: ${{ github.event.inputs.from_date }}
         category: tech
