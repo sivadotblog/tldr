@@ -11,6 +11,9 @@ inputs:
   repo:
     description: 'Repository to push the changes'
     required: true
+  gh_token:
+    description: 'GH Token'
+    required: true
 
 runs:
   using: 'composite'
@@ -36,7 +39,7 @@ runs:
 
     - name: Set up GitHub token
       shell: bash
-      run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
+      run: echo "GH_TOKEN=${{ inputs.gh_token }}" >> $GITHUB_ENV
 
     - name: Commit and push changes
       shell: bash
@@ -45,4 +48,4 @@ runs:
         git config --global user.email 'github-actions@github.com'
         git add tldr/
         git commit -m "Add newsletter archive for ${{ inputs.date }}"
-        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ inputs.repo }}.git main
+        git push https://x-access-token:${{ inputs.gh_token }}@github.com/${{ inputs.repo }}.git main
