@@ -10,7 +10,8 @@ jobs:
 
     strategy:
       matrix:
-        category: [tech, ai, business, science]
+        category: [tech, ai, data, devops]
+      fail-fast: false
 
     steps:
     - name: Checkout repository
@@ -31,7 +32,7 @@ jobs:
         python scripts/archive_newsletter.py ${{ matrix.category }} $(date -d "yesterday" '+%Y-%m-%d')
 
     - name: Set up GitHub token
-      run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
 
     - name: Commit and push changes
       run: |
@@ -39,4 +40,4 @@ jobs:
         git config --global user.email 'github-actions@github.com'
         git add tldr/
         git commit -m "Add newsletter archive for ${{ matrix.category }} $(date -d "yesterday" '+%Y-%m-%d')"
-        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main
