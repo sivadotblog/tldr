@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import markdownify
 from datetime import datetime
 import logging
+import time
 
 
 def fetch_newsletter(category, date):
@@ -31,6 +32,7 @@ def save_markdown(category, date, markdown_content):
     file_path = f"{directory}/{date}.md"
     with open(file_path, "w") as file:
         file.write(markdown_content)
+        file.write(f"\n\nTimestamp: {int(time.time())}")
 
 
 if __name__ == "__main__":
