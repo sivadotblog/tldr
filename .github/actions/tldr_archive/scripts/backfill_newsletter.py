@@ -13,8 +13,7 @@ def fetch_newsletter(category, date):
         raise Exception(f"Failed to fetch newsletter for {category} on {date}")
 
 def parse_html_to_markdown(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    content = soup.find('div', {'class': 'newsletter-content'})
+    content = BeautifulSoup(html_content, 'html.parser')
     markdown_content = markdownify.markdownify(str(content), heading_style="ATX")
     return markdown_content
 
