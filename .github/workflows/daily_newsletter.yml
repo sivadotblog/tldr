@@ -29,11 +29,11 @@ jobs:
         pip install requests beautifulsoup4 markdownify
 
     - name: Run archive script
-      run: |
-        python scripts/archive_newsletter.py tech $(date -d "yesterday" '+%Y-%m-%d')
-        python scripts/archive_newsletter.py ai $(date -d "yesterday" '+%Y-%m-%d')
-        python scripts/archive_newsletter.py data $(date -d "yesterday" '+%Y-%m-%d')
-        python scripts/archive_newsletter.py devops $(date -d "yesterday" '+%Y-%m-%d')
+      uses: ./tldr_archieve/action.yml
+      with:
+        date: $(date -d "yesterday" '+%Y-%m-%d')
+        category: tech
+        repo: ${{ github.repository }}
 
     - name: Set up GitHub token
       run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV

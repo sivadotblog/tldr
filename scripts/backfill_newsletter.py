@@ -28,6 +28,8 @@ def save_markdown(category, date, markdown_content):
 
 if __name__ == "__main__":
     import sys
+    if len(sys.argv) < 4:
+        raise IndexError("Not enough arguments provided. Usage: script.py <category> <from_date> <to_date>")
     category = sys.argv[1]
     from_date = datetime.strptime(sys.argv[2], '%Y-%m-%d')
     to_date = datetime.strptime(sys.argv[3], '%Y-%m-%d')
