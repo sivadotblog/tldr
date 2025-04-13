@@ -7,11 +7,12 @@ on:
 jobs:
   archive_newsletter:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-    strategy:
-      matrix:
-        category: [tech, ai, data, devops]
-      fail-fast: false
+    concurrency:
+      group: archive_newsletter
+      cancel-in-progress: true
 
     steps:
     - name: Checkout repository
@@ -29,7 +30,10 @@ jobs:
 
     - name: Run archive script
       run: |
-        python scripts/archive_newsletter.py ${{ matrix.category }} $(date -d "yesterday" '+%Y-%m-%d')
+        python scripts/archive_newsletter.py tech $(date -d "yesterday" '+%Y-%m-%d')
+        python scripts/archive_newsletter.py ai $(date -d "yesterday" '+%Y-%m-%d')
+        python scripts/archive_newsletter.py data $(date -d "yesterday" '+%Y-%m-%d')
+        python scripts/archive_newsletter.py devops $(date -d "yesterday" '+%Y-%m-%d')
 
     - name: Set up GitHub token
       run: echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
@@ -39,5 +43,5 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git add tldr/
-        git commit -m "Add newsletter archive for ${{ matrix.category }} $(date -d "yesterday" '+%Y-%m-%d')"
+        git commit -m "Add newsletter archive for $(date -d "yesterday" '+%Y-%m-%d')"
         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main
