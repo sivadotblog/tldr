@@ -45,11 +45,25 @@ runs:
       shell: bash
       run: echo "GH_TOKEN=${{ inputs.gh_token }}" >> $GITHUB_ENV
 
+    - name: Pull latest changes
+      shell: bash
+      run: |
+        git fetch origin main
+        git reset --hard origin/main  # Ensures local state matches remote
+
     - name: Commit and push changes
       shell: bash
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
+        
         git add tldr/
+        
+        # Check if there are changes before committing
+        if git diff --cached --quiet; then
+          echo "No changes to commit, exiting cleanly."
+          exit 0
+        fi
+        
         git commit -m "Add newsletter archive for ${{ inputs.date }}"
-        git push https://x-access-token:${{ inputs.gh_token }}@github.com/${{ inputs.repo }}.git main || echo "No changes to commit"
+        git push https://x-access-token:${{ inputs.gh_token }}@github.com/${{ inputs.repo }}.git main
