@@ -45,6 +45,12 @@ runs:
       shell: bash
       run: echo "GH_TOKEN=${{ inputs.gh_token }}" >> $GITHUB_ENV
 
+    - name: set github profile 
+      shell: bash
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
     - name: Pull latest changes
       shell: bash
       run: |
@@ -53,10 +59,7 @@ runs:
 
     - name: Commit and push changes
       shell: bash
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        
+      run: |       
         git add tldr/
         
         # Check if there are changes before committing
