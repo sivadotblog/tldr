@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-      - tldr_pages
+
   workflow_dispatch:
 
 permissions:
