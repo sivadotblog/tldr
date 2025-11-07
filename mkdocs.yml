@@ -46,7 +46,6 @@ plugins:
       decryption_failure_message: "Incorrect password, please try again."
       encryption_info_message: "Contact the administrator for access credentials."
       remember_password: true
-      default_expire_delay: 24
 
 markdown_extensions:
   - pymdownx.highlight
