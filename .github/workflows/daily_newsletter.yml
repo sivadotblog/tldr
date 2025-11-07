@@ -1,51 +1,98 @@
-name: Daily Newsletter Archive
+name: Archive Newsletters and Deploy Site
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 13 * * *" # 8/9 AM EST/EDT
+    - cron: "0 1 * * *" # 8/9 PM EST/EDT
+  push:
+    branches:
+      - main
+      - tldr_pages
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: archive-and-deploy
+  cancel-in-progress: false
 
 jobs:
   archive_newsletter:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    concurrency:
-      group: archive_newsletter
-      cancel-in-progress: true
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Archive tech newsletter
-      uses: ./.github/actions/tldr_archive
-      with:
-        date: $(date -d "yesterday" '+%Y-%m-%d')
-        category: tech
-        repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+      - name: Archive tech newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "yesterday" '+%Y-%m-%d')
+          category: tech
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
 
-    - name: Archive devops newsletter
-      uses: ./.github/actions/tldr_archive
-      with:
-        date: $(date -d "yesterday" '+%Y-%m-%d')
-        category: devops
-        repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+      - name: Archive devops newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "yesterday" '+%Y-%m-%d')
+          category: devops
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
 
-    - name: Archive data newsletter
-      uses: ./.github/actions/tldr_archive
-      with:
-        date: $(date -d "yesterday" '+%Y-%m-%d')
-        category: data
-        repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+      - name: Archive data newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "yesterday" '+%Y-%m-%d')
+          category: data
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
 
-    - name: Archive ai newsletter
-      uses: ./.github/actions/tldr_archive
-      with:
-        date: $(date -d "yesterday" '+%Y-%m-%d')
-        category: ai
-        repo: ${{ github.repository }}
-        gh_token: ${{ secrets.GH_TOKEN }}
+      - name: Archive ai newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "yesterday" '+%Y-%m-%d')
+          category: ai
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: archive_newsletter
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Build MkDocs site
+        env:
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: mkdocs build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
