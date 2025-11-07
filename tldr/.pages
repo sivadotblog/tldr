@@ -1,0 +1,7 @@
+title: Home
+nav:
+  - index.md
+  - AI: ai/
+  - Data: data/
+  - DevOps: devops/
+  - Tech: tech/
