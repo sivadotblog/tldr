@@ -46,7 +46,7 @@ plugins:
       decryption_failure_message: "Incorrect password, please try again."
       encryption_info_message: "Contact the administrator for access credentials."
       remember_password: true
-      search_index: "dynamically"
+      search_index: "clear"
 
 markdown_extensions:
   - pymdownx.highlight
