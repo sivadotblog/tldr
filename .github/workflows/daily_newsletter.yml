@@ -2,8 +2,8 @@ name: Archive Newsletters and Deploy Site
 
 on:
   schedule:
-    - cron: "0 13 * * *" # 8/9 AM EST/EDT
-    - cron: "0 1 * * *" # 8/9 PM EST/EDT
+    - cron: "0 15 * * *" # 9/10 AM EST/EDT
+    - cron: "0 17 * * *" # 12/1 PM EST/EDT
   push:
     branches:
       - main
