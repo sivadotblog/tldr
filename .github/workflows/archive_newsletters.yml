@@ -1,0 +1,63 @@
+name: Archive Newsletters
+
+on:
+  schedule:
+    - cron: "0 15 * * *" # 9/10 AM EST/EDT
+    - cron: "0 17 * * *" # 12/1 PM EST/EDT
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-newsletters
+  cancel-in-progress: false
+
+jobs:
+  archive_newsletter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Archive tech newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "today" '+%Y-%m-%d')
+          category: tech
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Archive devops newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "today" '+%Y-%m-%d')
+          category: devops
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Archive data newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "today" '+%Y-%m-%d')
+          category: data
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Archive ai newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "today" '+%Y-%m-%d')
+          category: ai
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Trigger deploy workflow
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{"event_type":"newsletters_archived"}'
