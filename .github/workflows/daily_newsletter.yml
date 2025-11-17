@@ -30,7 +30,7 @@ jobs:
       - name: Archive tech newsletter
         uses: ./.github/actions/tldr_archive
         with:
-          date: $(date -d "yesterday" '+%Y-%m-%d')
+          date: $(date -d "today" '+%Y-%m-%d')
           category: tech
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
@@ -38,7 +38,7 @@ jobs:
       - name: Archive devops newsletter
         uses: ./.github/actions/tldr_archive
         with:
-          date: $(date -d "yesterday" '+%Y-%m-%d')
+          date: $(date -d "today" '+%Y-%m-%d')
           category: devops
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
       - name: Archive data newsletter
         uses: ./.github/actions/tldr_archive
         with:
-          date: $(date -d "yesterday" '+%Y-%m-%d')
+          date: $(date -d "today" '+%Y-%m-%d')
           category: data
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
@@ -54,7 +54,7 @@ jobs:
       - name: Archive ai newsletter
         uses: ./.github/actions/tldr_archive
         with:
-          date: $(date -d "yesterday" '+%Y-%m-%d')
+          date: $(date -d "today" '+%Y-%m-%d')
           category: ai
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
