@@ -54,6 +54,14 @@ jobs:
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
 
+      - name: Archive infosec newsletter
+        uses: ./.github/actions/tldr_archive
+        with:
+          date: $(date -d "today" '+%Y-%m-%d')
+          category: infosec
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
+
       - name: Trigger deploy workflow
         run: |
           curl -X POST \

@@ -7,6 +7,7 @@ Welcome to the TLDR Newsletter Archives! This site provides easy access to all T
 - **[AI Newsletter](ai/)** - Latest developments in artificial intelligence
 - **[Data Newsletter](data/)** - Data science, engineering, and analytics
 - **[DevOps Newsletter](devops/)** - DevOps, infrastructure, and deployment
+- **[InfoSec Newsletter](infosec/)** - Information security and cybersecurity news
 - **[Tech Newsletter](tech/)** - General technology news and updates
 
 ## About
