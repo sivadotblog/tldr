@@ -46,7 +46,12 @@ if __name__ == "__main__":
     current_date = from_date
     while current_date <= to_date:
         date_str = current_date.strftime("%Y-%m-%d")
-        html_content = fetch_newsletter(category, date_str)
-        markdown_content = parse_html_to_markdown(html_content)
-        save_markdown(category, date_str, markdown_content)
+        try:
+            html_content = fetch_newsletter(category, date_str)
+            markdown_content = parse_html_to_markdown(html_content)
+            save_markdown(category, date_str, markdown_content)
+            print(f"Successfully processed {category} newsletter for {date_str}")
+        except Exception as e:
+            print(f"Skipping {category} for {date_str}: {e}")
+            pass
         current_date += timedelta(days=1)
