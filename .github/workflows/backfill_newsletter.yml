@@ -9,6 +9,17 @@ on:
       to_date:
         description: "End date for backfill (YYYY-MM-DD)"
         required: true
+      category:
+        description: "Category to backfill"
+        required: true
+        type: choice
+        options:
+          - all
+          - tech
+          - devops
+          - data
+          - ai
+          - infosec
 
 jobs:
   backfill_newsletter:
@@ -24,8 +35,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-
       - name: Run backfill script for tech
+        if: ${{ github.event.inputs.category == 'all' || github.event.inputs.category == 'tech' }}
         uses: ./.github/actions/tldr_archive
         with:
           from_date: ${{ github.event.inputs.from_date }}
@@ -35,6 +46,7 @@ jobs:
           gh_token: ${{ secrets.GH_TOKEN }}
 
       - name: Run backfill script for devops
+        if: ${{ github.event.inputs.category == 'all' || github.event.inputs.category == 'devops' }}
         uses: ./.github/actions/tldr_archive
         with:
           from_date: ${{ github.event.inputs.from_date }}
@@ -44,6 +56,7 @@ jobs:
           gh_token: ${{ secrets.GH_TOKEN }}
 
       - name: Run backfill script for data
+        if: ${{ github.event.inputs.category == 'all' || github.event.inputs.category == 'data' }}
         uses: ./.github/actions/tldr_archive
         with:
           from_date: ${{ github.event.inputs.from_date }}
@@ -51,8 +64,9 @@ jobs:
           category: data
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
-  
+
       - name: Run backfill script for ai
+        if: ${{ github.event.inputs.category == 'all' || github.event.inputs.category == 'ai' }}
         uses: ./.github/actions/tldr_archive
         with:
           from_date: ${{ github.event.inputs.from_date }}
@@ -61,3 +75,12 @@ jobs:
           repo: ${{ github.repository }}
           gh_token: ${{ secrets.GH_TOKEN }}
 
+      - name: Run backfill script for infosec
+        if: ${{ github.event.inputs.category == 'all' || github.event.inputs.category == 'infosec' }}
+        uses: ./.github/actions/tldr_archive
+        with:
+          from_date: ${{ github.event.inputs.from_date }}
+          date: ${{ github.event.inputs.to_date }}
+          category: infosec
+          repo: ${{ github.repository }}
+          gh_token: ${{ secrets.GH_TOKEN }}
