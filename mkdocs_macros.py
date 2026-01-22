@@ -14,13 +14,15 @@ def define_env(env):
     """
 
     @env.macro
-    def recent_newsletters(category, count=10):
+    def recent_newsletters(category, count=10, include_prefix=False):
         """
         Generate a list of the most recent newsletter links for a category.
 
         Args:
             category: The newsletter category (ai, data, devops, tech)
             count: Number of recent newsletters to show (default: 10)
+            include_prefix: Whether to include category prefix in links (default: False)
+                           Set to True when calling from home page
 
         Returns:
             Markdown formatted list of recent newsletters
@@ -63,16 +65,21 @@ def define_env(env):
             return "*No newsletters found.*"
 
         # Generate markdown list
-        lines = ["## Latest Issues\n"]
+        lines = ["### Latest Issues\n"]
         for item in recent:
             # Try to extract title from the first line of the file
             title = extract_title(item["path"])
 
-            # Format: [Date - Title](filename)
+            # Build link path - include category prefix if requested
+            link_path = (
+                f"{category}/{item['filename']}" if include_prefix else item["filename"]
+            )
+
+            # Format: [Date - Title](link_path)
             if title:
-                lines.append(f"- [{item['date_str']}]({item['filename']}) - {title}")
+                lines.append(f"- [{item['date_str']}]({link_path}) - {title}")
             else:
-                lines.append(f"- [{item['date_str']}]({item['filename']})")
+                lines.append(f"- [{item['date_str']}]({link_path})")
 
         # Add link to browse all
         lines.append("\n---")
