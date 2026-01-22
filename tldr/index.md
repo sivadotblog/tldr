@@ -2,29 +2,30 @@
 
 Welcome to the TLDR Newsletter Archives! This site provides easy access to all TLDR newsletters with full search functionality.
 
-## Browse by Category
+---
 
-- **[AI Newsletter](ai/)** - Latest developments in artificial intelligence
-- **[Data Newsletter](data/)** - Data science, engineering, and analytics
-- **[DevOps Newsletter](devops/)** - DevOps, infrastructure, and deployment
-- **[InfoSec Newsletter](infosec/)** - Information security and cybersecurity news
-- **[Tech Newsletter](tech/)** - General technology news and updates
+## [AI Newsletter Archives](ai/)
+{{ recent_newsletters('ai', 5) }}
 
-## About
+---
 
-This repository contains archives of the TLDR newsletter for easy access and better searchability. Use the search bar above to find specific topics, or browse by category using the tabs.
+## [Data Newsletter Archives](data/)
+{{ recent_newsletters('data', 5) }}
 
-## Features
+---
 
-- 🔍 **Full-text search** across all newsletters
-- 📅 **Chronological organization** (newest first)
-- 🌓 **Dark/light mode** toggle
-- 📱 **Mobile-friendly** design
+## [DevOps Newsletter Archives](devops/)
+{{ recent_newsletters('devops', 5) }}
 
-## Quick Links
+---
 
-- [GitHub Repository](https://github.com/sivadotblog/tldr)
-- [TLDR Website](https://tldr.tech)
+## [InfoSec Newsletter Archives](infosec/)
+{{ recent_newsletters('infosec', 5) }}
+
+---
+
+## [Tech Newsletter Archives](tech/)
+{{ recent_newsletters('tech', 5) }}
 
 ---
 
