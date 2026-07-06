@@ -2,8 +2,8 @@ name: Archive Newsletters
 
 on:
   schedule:
-    - cron: "0 15 * * *" # 9/10 AM EST/EDT
-    - cron: "0 17 * * *" # 12/1 PM EST/EDT
+    - cron: "0,30 10-12 * * 1-5" # 6-8:30 AM EDT / 5-7:30 AM EST, Mon-Fri
+    - cron: "0 13 * * 1-5"       # 9 AM EDT / 8 AM EST, Mon-Fri
 
   workflow_dispatch:
 
