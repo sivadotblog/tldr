@@ -1,0 +1,43 @@
+name: Deploy TLDR Search UI to technews
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-technews-ui
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: ui
+        run: npm ci
+
+      - name: Build
+        working-directory: ui
+        env:
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+        run: npm run build
+
+      - name: Deploy to sivadotblog/technews
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.GH_TOKEN }}
+          external_repository: sivadotblog/technews
+          publish_branch: gh-pages
+          publish_dir: ui/dist
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
