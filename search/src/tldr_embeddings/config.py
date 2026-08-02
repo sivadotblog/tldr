@@ -8,10 +8,10 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME", "tldr_search")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "chunks")
 
-# Path to the newsletter tree, relative to this package's root (tldr/search/).
-# search/ is a sibling of the category directories (ai/, tech/, ...) inside tldr/,
-# so the parent directory is the newsletter tree itself.
-DOCS_DIR = os.getenv("TLDR_DOCS_DIR", "..")
+# Path to the newsletter tree, relative to this package's root (search/).
+# search/ is a sibling of tldr/ (the newsletter archive + mkdocs source) at
+# the repo root, so ../tldr is the default.
+DOCS_DIR = os.getenv("TLDR_DOCS_DIR", "../tldr")
 
 VECTOR_INDEX_NAME = "tldr_vector_index"
 TEXT_INDEX_NAME = "tldr_text_index"
