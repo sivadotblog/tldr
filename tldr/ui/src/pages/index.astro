@@ -1,0 +1,274 @@
+---
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000";
+const CATEGORIES = ["ai", "data", "devops", "infosec", "tech"];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TLDR Archive Search</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1a1a2e;
+        --bg: #fafafa;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --accent: #4f46e5;
+        --card: #ffffff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e5e7eb;
+          --bg: #111318;
+          --muted: #9ca3af;
+          --border: #2a2d35;
+          --accent: #818cf8;
+          --card: #1a1d24;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 3rem 1.25rem 4rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 650;
+        margin: 0 0 0.35rem;
+      }
+      .tagline {
+        color: var(--muted);
+        margin: 0 0 2rem;
+        font-size: 0.95rem;
+      }
+      form {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      input[type="search"] {
+        flex: 1;
+        padding: 0.7rem 0.9rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: var(--card);
+        color: var(--fg);
+      }
+      input[type="search"]:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+      }
+      button {
+        padding: 0.7rem 1.1rem;
+        border: none;
+        border-radius: 8px;
+        background: var(--accent);
+        color: white;
+        font-size: 1rem;
+        font-weight: 550;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .filters {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.75rem;
+      }
+      .filters button {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 0.3rem 0.75rem;
+        font-size: 0.82rem;
+        font-weight: 500;
+        border-radius: 999px;
+      }
+      .filters button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+      }
+      .status {
+        color: var(--muted);
+        font-size: 0.9rem;
+        min-height: 1.4em;
+        margin-bottom: 0.5rem;
+      }
+      .status.error {
+        color: #dc2626;
+      }
+      ul.results {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+      li.result {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        background: var(--card);
+      }
+      .result a.title {
+        font-size: 1.02rem;
+        font-weight: 600;
+        color: var(--fg);
+        text-decoration: none;
+      }
+      .result a.title:hover {
+        color: var(--accent);
+      }
+      .snippet {
+        margin: 0.4rem 0 0.55rem;
+        font-size: 0.92rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+      .meta .pill {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.1rem 0.55rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TLDR Archive Search</h1>
+      <p class="tagline">Semantic search over the AI, Data, DevOps, InfoSec, and Tech newsletters.</p>
+
+      <form id="search-form">
+        <input
+          type="search"
+          id="q"
+          name="q"
+          placeholder="e.g. AI adoption failing in enterprises"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="submit-btn">Search</button>
+      </form>
+
+      <div class="filters" id="category-filters">
+        <button type="button" data-category="" class="active">All</button>
+        {CATEGORIES.map((c) => (
+          <button type="button" data-category={c}>{c}</button>
+        ))}
+      </div>
+
+      <p class="status" id="status" role="status"></p>
+      <ul class="results" id="results"></ul>
+    </main>
+
+    <script define:vars={{ API_URL }}>
+      const form = document.getElementById("search-form");
+      const input = document.getElementById("q");
+      const submitBtn = document.getElementById("submit-btn");
+      const statusEl = document.getElementById("status");
+      const resultsEl = document.getElementById("results");
+      const filterButtons = document.querySelectorAll("#category-filters button");
+
+      let activeCategory = "";
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeCategory = btn.dataset.category;
+          if (input.value.trim()) runSearch(input.value.trim());
+        });
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (q) runSearch(q);
+      });
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      async function runSearch(q) {
+        submitBtn.disabled = true;
+        statusEl.className = "status";
+        statusEl.textContent = "Searching…";
+        resultsEl.innerHTML = "";
+
+        const params = new URLSearchParams({ q, limit: "10" });
+        if (activeCategory) params.set("category", activeCategory);
+
+        try {
+          const res = await fetch(`${API_URL}/api/search?${params}`);
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.detail || `Search failed (${res.status})`);
+          }
+          const data = await res.json();
+          render(data);
+        } catch (err) {
+          statusEl.className = "status error";
+          statusEl.textContent = err.message || "Something went wrong. Is the API running?";
+        } finally {
+          submitBtn.disabled = false;
+        }
+      }
+
+      function render(data) {
+        if (data.count === 0) {
+          statusEl.textContent = `No results for "${data.query}".`;
+          return;
+        }
+        statusEl.textContent = `${data.count} result${data.count === 1 ? "" : "s"} for "${data.query}"`;
+
+        resultsEl.innerHTML = data.results
+          .map(
+            (r) => `
+          <li class="result">
+            <a class="title" href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">
+              ${escapeHtml(r.title)}
+            </a>
+            <p class="snippet">${escapeHtml(r.snippet)}</p>
+            <div class="meta">
+              <span class="pill">${escapeHtml(r.category)}</span>
+              <span>${escapeHtml(r.date)}</span>
+              <span>${escapeHtml(r.section)}</span>
+              <span>${escapeHtml(r.source_host)}</span>
+              <span>score ${r.score.toFixed(3)}</span>
+            </div>
+          </li>`
+          )
+          .join("");
+      }
+    </script>
+  </body>
+</html>

@@ -1,3 +1,14 @@
 venv*
 site/
 *.cache
+
+# tldr/api, tldr/search, tldr/ui
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+node_modules/
+dist/
+.astro/
+.env
+vendor/

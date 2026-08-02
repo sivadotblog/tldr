@@ -1,0 +1,29 @@
+[project]
+name = "tldr-api"
+version = "0.1.0"
+description = "FastAPI search endpoint over the TLDR archive vector index"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+    "pymongo>=4.0.0",
+    "python-dotenv>=1.0.0",
+    "certifi>=2024.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "httpx>=0.27.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
