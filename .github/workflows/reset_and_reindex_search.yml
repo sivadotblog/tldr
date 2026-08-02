@@ -1,0 +1,35 @@
+name: Reset and Reindex Search
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reset-and-reindex-search
+  cancel-in-progress: false
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tldr-embeddings
+        working-directory: search
+        run: pip install -e .
+
+      - name: Reset and reload full corpus
+        working-directory: search
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DB_NAME: ${{ secrets.MONGO_DB_NAME }}
+          COLLECTION_NAME: ${{ secrets.MONGO_COLLECTION_NAME }}
+        run: python -m tldr_embeddings.load --all --reset
